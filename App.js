@@ -1,20 +1,39 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import {
+  ImageBackground,
+  StyleSheet,
+  Dimensions,
+  // NativeModules,
+} from "react-native";
+
+import { LoginScreen } from "./Screens";
+
+// const { StatusBarManager } = NativeModules;
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ImageBackground
+      style={[styles.imageBackground, styles.fixed]}
+      resizeMode="cover"
+      source={require("./assets/images/podsolnuhi-rasteniya-16317.jpeg")}
+    >
+      <LoginScreen />
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  imageBackground: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
+    zIndex: -1,
+  },
+  fixed: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 });
