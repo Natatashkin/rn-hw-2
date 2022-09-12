@@ -1,32 +1,36 @@
-import { StatusBar } from "expo-status-bar";
 import React from "react";
-import {
-  ImageBackground,
-  StyleSheet,
-  Dimensions,
-  // NativeModules,
-} from "react-native";
+import { ImageBackground, StyleSheet } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
+import { LoginScreen, RegistrationScreen } from "./Screens";
+import useLoadedFonts from "./hooks/useLoadedFonts";
+import useWindowDimensions from "./hooks/useWindowDimensions";
 
-import { LoginScreen } from "./Screens";
-
-// const { StatusBarManager } = NativeModules;
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const { width, height } = useWindowDimensions();
+  const { fontsLoaded, onLayoutRootView } = useLoadedFonts();
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <ImageBackground
-      style={[styles.imageBackground, styles.fixed]}
+      onLayout={onLayoutRootView}
+      style={[styles.image, styles.fixed, { width, height }]}
       resizeMode="cover"
+      resizeMethod="resize"
       source={require("./assets/images/podsolnuhi-rasteniya-16317.jpeg")}
     >
-      <LoginScreen />
+      {/* <LoginScreen /> */}
+      <RegistrationScreen />
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  imageBackground: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+  image: {
     zIndex: -1,
   },
   fixed: {

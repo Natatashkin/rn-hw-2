@@ -1,22 +1,31 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { TextInput, View, StyleSheet, Pressable } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { MAIN_TEXT_FONT, APP_COLORS } from "../constants";
 
-const InputText = ({ placeholder, marginBottom, secureTextEntry = false }) => {
+const InputText = ({
+  placeholder,
+  marginBottom,
+  secureTextEntry = false,
+  onChangeText,
+  value,
+}) => {
   const [inputFocus, setInputFocus] = useState(false);
   const [activeIcon, setActiveIcon] = useState(false);
+  const currentInput = useRef(null);
 
   const toggleIconPress = () => {
     setActiveIcon(!activeIcon);
   };
 
-  const handleIconPress = () => {
+  const handleIconPress = (e) => {
     if (!inputFocus) {
+      setInputFocus(true);
       return;
     }
     toggleIconPress();
   };
-  const handleInputBlur = () => {
+  const handleInputBlur = (e) => {
     if (activeIcon) {
       setActiveIcon(false);
     }
@@ -24,20 +33,32 @@ const InputText = ({ placeholder, marginBottom, secureTextEntry = false }) => {
   };
   const isInputOnFocus = useMemo(
     () => (inputFocus ? styles.inputOnFocus : styles.inputWhithoutFocus),
-    [inputFocus, styles]
+    [inputFocus]
   );
   const isMarginBottom = useMemo(
     () => marginBottom && styles.marginInput,
-    [marginBottom, styles]
+    [marginBottom]
   );
+
+  const isHorizontalPaddings = secureTextEntry
+    ? { paddingLeft: 16 }
+    : { paddingHorizontal: 16 };
+
+  useEffect(() => {
+    if (inputFocus) {
+      currentInput.current.focus();
+    }
+  }, [inputFocus]);
 
   return (
     <View style={[styles.inputContainer, isInputOnFocus, isMarginBottom]}>
       <TextInput
-        autoFocus={inputFocus}
+        value={value}
+        onChangeText={onChangeText}
+        ref={currentInput}
         secureTextEntry={!activeIcon && secureTextEntry}
         placeholder={placeholder}
-        style={[styles.input]}
+        style={[styles.input, isHorizontalPaddings]}
         onFocus={(e) => setInputFocus(true)}
         onBlur={handleInputBlur}
       />
@@ -63,7 +84,7 @@ const InputText = ({ placeholder, marginBottom, secureTextEntry = false }) => {
 };
 
 export default InputText;
-
+const { blue, white, grey, lightGrey, darkGrey, black } = APP_COLORS;
 const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
@@ -73,19 +94,18 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 16,
-    paddingLeft: 16,
     paddingVertical: 16,
+    ...MAIN_TEXT_FONT,
   },
   inputOnFocus: {
-    borderColor: "#0e3cd4",
-    backgroundColor: "#ffffff",
-    color: "#000000",
+    borderColor: blue,
+    backgroundColor: white,
+    color: black,
   },
   inputWhithoutFocus: {
-    borderColor: "#E8E8E8",
-    backgroundColor: "#F6F6F6",
-    color: "#696977",
+    borderColor: grey,
+    backgroundColor: lightGrey,
+    color: darkGrey,
   },
 
   marginInput: {
@@ -98,9 +118,9 @@ const styles = StyleSheet.create({
   },
 
   iconColor: {
-    color: "#696977",
+    color: darkGrey,
   },
   iconActiveColor: {
-    color: "#0e3cd4",
+    color: blue,
   },
 });
